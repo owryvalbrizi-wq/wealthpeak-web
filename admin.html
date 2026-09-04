@@ -1,8 +1,160 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>WealthPeak Admin</title>
-<script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-slate-100 p-8">
-<h1 class="text-2xl font-bold mb-4">WealthPeak Admin</h1>
-<p><a class="text-teal-600" href="/">← Back to site</a></p>
-<p class="text-slate-600 mt-4">Admin panel placeholder. API: https://wealthpeak-api-2.onrender.com</p>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel | WealthPeak</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+  <nav class="bg-slate-900 text-white px-4 py-3 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
+        <i class="fas fa-shield-halved text-black"></i>
+      </div>
+      <span class="font-bold">Admin Panel</span>
+    </div>
+    <div class="flex gap-3">
+      <a href="dashboard.html" class="text-sm bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg">Dashboard</a>
+      <button onclick="logout()" class="text-sm bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded-lg">Logout</button>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Platform Overview</h1>
+
+    <div id="stats-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border p-6 mb-8">
+      <h2 class="text-lg font-bold mb-4">Adjust User Balance</h2>
+      <div class="flex flex-wrap gap-3 items-end">
+        <div>
+          <label class="text-sm text-slate-600">User ID</label>
+          <input type="number" id="adj-uid" class="block border rounded-lg px-3 py-2 w-28" placeholder="1" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-600">Amount (+ or -)</label>
+          <input type="number" id="adj-amount" class="block border rounded-lg px-3 py-2 w-32" placeholder="50" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-600">Reason</label>
+          <input type="text" id="adj-reason" class="block border rounded-lg px-3 py-2 w-48" placeholder="Bonus / Correction" />
+        </div>
+        <button onclick="adjustBalance()" class="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-4 py-2 rounded-lg">Apply</button>
+      </div>
+      <p id="adj-msg" class="text-sm mt-2 hidden"></p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border p-6">
+      <h2 class="text-lg font-bold mb-4">All Users</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-slate-500 border-b">
+              <th class="py-2 pr-4">ID</th>
+              <th class="py-2 pr-4">Name</th>
+              <th class="py-2 pr-4">Email</th>
+              <th class="py-2 pr-4">Balance</th>
+              <th class="py-2 pr-4">Invested</th>
+              <th class="py-2 pr-4">Earned</th>
+              <th class="py-2 pr-4">Referral</th>
+              <th class="py-2">Joined</th>
+            </tr>
+          </thead>
+          <tbody id="users-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = localStorage.getItem("wp_api") || "https://wealthpeak-api-2.onrender.com";
+    let token = localStorage.getItem("wp_token");
+
+    if (!token) {
+      alert("Please login first");
+      window.location.href = "dashboard.html";
+    }
+
+    async function api(path, options = {}) {
+      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error");
+      return data;
+    }
+
+    async function load() {
+      try {
+        const data = await api("/api/admin/stats");
+        const s = data.stats;
+        document.getElementById("stats-grid").innerHTML = `
+          <div class="bg-white rounded-2xl p-5 shadow-sm border"><p class="text-sm text-slate-500">Total Users</p><p class="text-2xl font-bold">${s.total_users}</p></div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border"><p class="text-sm text-slate-500">Total Invested</p><p class="text-2xl font-bold">$${s.total_invested}</p></div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border"><p class="text-sm text-slate-500">Total Earned</p><p class="text-2xl font-bold text-emerald-600">$${s.total_earned}</p></div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border"><p class="text-sm text-slate-500">Active Investments</p><p class="text-2xl font-bold">${s.active_investments}</p></div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border"><p class="text-sm text-slate-500">Completed</p><p class="text-2xl font-bold">${s.completed_investments}</p></div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border"><p class="text-sm text-slate-500">Total Deposits</p><p class="text-2xl font-bold">$${s.total_deposits}</p></div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border"><p class="text-sm text-slate-500">Total Withdrawals</p><p class="text-2xl font-bold">$${s.total_withdrawals}</p></div>
+        `;
+
+        const usersData = await api("/api/admin/users");
+        document.getElementById("users-table").innerHTML = usersData.users.map(u => `
+          <tr class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="py-2 pr-4 font-mono">${u.id}</td>
+            <td class="py-2 pr-4">${u.full_name}${u.is_admin ? ' <span class="text-amber-600 text-xs">Admin</span>' : ''}</td>
+            <td class="py-2 pr-4">${u.email}</td>
+            <td class="py-2 pr-4">$${Number(u.balance).toFixed(2)}</td>
+            <td class="py-2 pr-4">$${Number(u.total_invested).toFixed(2)}</td>
+            <td class="py-2 pr-4 text-emerald-600">$${Number(u.total_earned).toFixed(2)}</td>
+            <td class="py-2 pr-4 font-mono text-xs">${u.referral_code || '-'}</td>
+            <td class="py-2 text-slate-500 text-xs">${u.created_at?.slice(0,10) || ''}</td>
+          </tr>
+        `).join("");
+      } catch (e) {
+        if (e.message.includes("Admin") || e.message.includes("Token")) {
+          alert(e.message);
+          window.location.href = "dashboard.html";
+        }
+        console.error(e);
+      }
+    }
+
+    async function adjustBalance() {
+      const msg = document.getElementById("adj-msg");
+      try {
+        const data = await api("/api/admin/adjust-balance", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: parseInt(document.getElementById("adj-uid").value),
+            amount: parseFloat(document.getElementById("adj-amount").value),
+            reason: document.getElementById("adj-reason").value || "Admin adjustment"
+          })
+        });
+        msg.textContent = data.message + " → New balance: $" + data.new_balance;
+        msg.className = "text-sm mt-2 text-emerald-600";
+        msg.classList.remove("hidden");
+        load();
+      } catch (e) {
+        msg.textContent = e.message;
+        msg.className = "text-sm mt-2 text-red-500";
+        msg.classList.remove("hidden");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("wp_token");
+      window.location.href = "dashboard.html";
+    }
+
+    load();
+  </script>
+</body>
+</html>
