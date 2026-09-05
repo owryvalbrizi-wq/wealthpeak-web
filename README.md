@@ -1,6 +1,7 @@
 # WealthPeak Web
 
-Static frontend for WealthPeak investments.
-Deployed on Vercel.
+Pages: index, dashboard, automation, withdraw
 
-API: https://wealthpeak-api-2.onrender.com
+Deploy to Vercel with rewrites for /dashboard /automation /withdraw
+
+Payment verification still uses Telegram bot server-side (not shown to users).
