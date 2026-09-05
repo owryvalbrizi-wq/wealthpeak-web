@@ -2,29 +2,134 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>WealthPeak Investments</title>
+<title>WealthPeak · Earn 350% Daily</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{font-family:system-ui,sans-serif}.gradient-bg{background:linear-gradient(135deg,#0f172a,#134e4a 45%,#0f766e)}
+body{font-family:system-ui,sans-serif}
+.gradient-bg{background:linear-gradient(135deg,#0f172a,#134e4a 45%,#0f766e)}
 .wp-ticker-wrap{overflow:hidden;background:#020617;border-bottom:1px solid rgba(20,184,166,.35)}
-.wp-ticker{display:flex;width:max-content;animation:wp-scroll 60s linear infinite}
+.wp-ticker{display:flex;width:max-content;animation:wp-scroll 55s linear infinite}
 .wp-ticker span{padding:0 1.75rem;white-space:nowrap;font-size:.8rem;color:#e2e8f0}
 @keyframes wp-scroll{to{transform:translateX(-50%)}}
 .plan-card{transition:transform .2s}.plan-card:hover{transform:translateY(-6px)}
 .badge-popular{background:linear-gradient(90deg,#f59e0b,#ef4444)}
 .badge-tide{background:linear-gradient(90deg,#8b5cf6,#06b6d4,#14b8a6);background-size:200% 100%;animation:shine 3s linear infinite}
 @keyframes shine{to{background-position:200%}}
+.drawer{position:fixed;inset:0;z-index:60;pointer-events:none}.drawer.open{pointer-events:auto}
+.drawer-bg{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .2s}.drawer.open .drawer-bg{opacity:1}
+.drawer-panel{position:absolute;left:0;top:0;bottom:0;width:min(300px,85vw);background:linear-gradient(180deg,#0f172a,#134e4a);transform:translateX(-105%);transition:transform .25s;border-right:1px solid rgba(20,184,166,.3);padding:1.25rem}
+.drawer.open .drawer-panel{transform:translateX(0)}
+.menu-item{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;border-radius:.85rem;color:#e2e8f0;font-weight:600;margin-bottom:.35rem}
+.menu-item:hover{background:rgba(20,184,166,.15)}
 </style>
 </head>
 <body class="bg-slate-950 text-white">
+<div id="drawer" class="drawer"><div class="drawer-bg" onclick="closeMenu()"></div>
+<div class="drawer-panel">
+<div class="flex justify-between mb-6"><span class="text-xl font-extrabold">Wealth<span class="text-teal-400">Peak</span></span><button onclick="closeMenu()" class="text-slate-400 px-2">✕</button></div>
+<a href="/" class="menu-item" onclick="closeMenu()"><span>🏠</span> Home</a>
+<a href="/dashboard" class="menu-item" onclick="closeMenu()"><span>📊</span> Dashboard</a>
+<a href="/automation" class="menu-item" onclick="closeMenu()"><span>⚡</span> Automation</a>
+<a href="/dashboard#deposit" class="menu-item" onclick="closeMenu()"><span>💳</span> Deposit</a>
+<a href="/withdraw" class="menu-item" onclick="closeMenu()"><span>💸</span> Withdraw</a>
+<a href="/dashboard#referrals" class="menu-item" onclick="closeMenu()"><span>🎁</span> Referrals</a>
+<div class="my-4 border-t border-teal-800/50"></div>
+<p class="text-xs text-slate-400 px-3 mb-2">HELP & SUPPORT</p>
+<a href="https://wa.me/254754728584" target="_blank" class="menu-item"><span>💬</span> WhatsApp Support</a>
+<a href="https://t.me/WealthPeakBot" target="_blank" class="menu-item"><span>✈️</span> Telegram Support</a>
+</div></div>
+
 <div class="wp-ticker-wrap py-2.5"><div class="wp-ticker" id="ticker"></div></div>
-<nav class="sticky top-0 z-50 bg-slate-950/90 border-b border-teal-900/40"><div class="max-w-6xl mx-auto px-4 py-3 flex justify-between"><span class="text-xl font-extrabold">Wealth<span class="text-teal-400">Peak</span></span><div class="flex gap-2"><a href="/automation" class="text-sm bg-amber-500 text-slate-900 px-3 py-2 rounded-xl font-bold">⚡ Automation</a><a href="/dashboard" class="text-sm bg-teal-600 px-4 py-2 rounded-xl font-semibold">Login / Deposit</a></div></div></nav>
-<header class="gradient-bg py-14 px-4 text-center"><h1 class="text-4xl font-black mb-3">Earn <span class="text-amber-400">350%</span> Daily</h1><p class="text-teal-100 mb-6">M-Pesa · Crypto · Agent · Hourly growth</p><a href="/dashboard" class="bg-amber-500 text-slate-900 font-bold px-8 py-3.5 rounded-2xl">💳 Deposit & Invest</a></header>
-<section class="max-w-6xl mx-auto px-4 py-12"><h2 class="text-2xl font-bold text-center mb-8">💎 Investment Plans</h2><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="plans"></div></section>
-<section class="max-w-3xl mx-auto px-4 py-8"><div class="grid sm:grid-cols-3 gap-4 text-sm text-center"><div class="bg-slate-900 border border-emerald-600/40 rounded-2xl p-5"><div class="text-2xl">🇰🇪</div><p class="font-bold text-emerald-400">M-Pesa / Zetupay</p></div><div class="bg-slate-900 border border-amber-500/40 rounded-2xl p-5"><div class="text-2xl">💎</div><p class="font-bold text-amber-400">Crypto USDT</p></div><div class="bg-slate-900 border border-teal-500/40 rounded-2xl p-5"><div class="text-2xl">📱</div><p class="font-bold text-teal-400">WhatsApp Agent</p></div></div></section>
-<footer class="py-8 text-center text-slate-500 text-sm"><a href="https://wa.me/254754728584" class="text-emerald-400">WhatsApp Support</a></footer>
+
+<nav class="sticky top-0 z-50 bg-slate-950/90 border-b border-teal-900/40">
+<div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<button type="button" onclick="openMenu()" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-lg">☰</button>
+<span class="text-xl font-extrabold">Wealth<span class="text-teal-400">Peak</span></span>
+</div>
+<div class="flex gap-2">
+<a href="/automation" class="text-sm bg-amber-500 text-slate-900 px-3 py-2 rounded-xl font-bold">⚡ Automation</a>
+<a href="/dashboard" class="text-sm bg-teal-600 px-4 py-2 rounded-xl font-semibold">Login / Deposit</a>
+</div>
+</div></nav>
+
+<header class="gradient-bg py-14 px-4 text-center">
+<h1 class="text-4xl font-black mb-3">Earn <span class="text-amber-400">350%</span> Daily</h1>
+<p class="text-teal-100 mb-2">Hourly growth · M-Pesa · Crypto · Agent</p>
+<p class="text-amber-200/90 text-sm mb-6">+ Binary Automation · 500% every 5 hours</p>
+<div class="flex flex-wrap justify-center gap-3">
+<a href="/dashboard" class="bg-amber-500 text-slate-900 font-bold px-8 py-3.5 rounded-2xl">💳 Deposit & Invest</a>
+<a href="/automation" class="bg-purple-600 font-bold px-6 py-3.5 rounded-2xl">⚡ Try Automation</a>
+</div>
+</header>
+
+<section class="max-w-6xl mx-auto px-4 py-12">
+<h2 class="text-2xl font-bold text-center mb-8">💎 Investment Plans</h2>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="plans"></div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pb-12">
+<h2 class="text-2xl font-bold text-center mb-2">⚡ Binary Automation</h2>
+<p class="text-center text-slate-400 text-sm mb-8">500% in 5 hours · Max 2 trades per day</p>
+<div class="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+<div class="bg-slate-900 border border-amber-500/40 rounded-2xl p-6 text-center">
+<div class="text-3xl mb-2">⚡</div>
+<div class="font-bold text-lg">Spark</div>
+<div class="text-3xl font-black text-amber-400 my-1">$100</div>
+<div class="text-sm text-emerald-400 mb-4">→ $500 in 5h</div>
+<a href="/automation" class="block bg-amber-500 text-slate-900 rounded-xl py-2.5 font-bold text-sm">Start →</a>
+</div>
+<div class="bg-slate-900 border border-orange-500/50 rounded-2xl p-6 text-center relative">
+<div class="absolute -top-2 right-4 badge-popular text-[10px] font-black px-2 py-0.5 rounded text-white">HOT</div>
+<div class="text-3xl mb-2">🔥</div>
+<div class="font-bold text-lg">Pulse</div>
+<div class="text-3xl font-black text-amber-400 my-1">$500</div>
+<div class="text-sm text-emerald-400 mb-4">→ $2,500 in 5h</div>
+<a href="/automation" class="block bg-amber-500 text-slate-900 rounded-xl py-2.5 font-bold text-sm">Start →</a>
+</div>
+<div class="bg-slate-900 border border-purple-500/40 rounded-2xl p-6 text-center">
+<div class="text-3xl mb-2">💎</div>
+<div class="font-bold text-lg">Storm</div>
+<div class="text-3xl font-black text-amber-400 my-1">$1,000</div>
+<div class="text-sm text-emerald-400 mb-4">→ $5,000 in 5h</div>
+<a href="/automation" class="block bg-amber-500 text-slate-900 rounded-xl py-2.5 font-bold text-sm">Start →</a>
+</div>
+</div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 py-8">
+<div class="grid sm:grid-cols-3 gap-4 text-sm text-center">
+<div class="bg-slate-900 border border-emerald-600/40 rounded-2xl p-5"><div class="text-2xl">🇰🇪</div><p class="font-bold text-emerald-400">M-Pesa / Zetupay</p></div>
+<div class="bg-slate-900 border border-amber-500/40 rounded-2xl p-5"><div class="text-2xl">💎</div><p class="font-bold text-amber-400">Crypto USDT</p></div>
+<div class="bg-slate-900 border border-teal-500/40 rounded-2xl p-5"><div class="text-2xl">📱</div><p class="font-bold text-teal-400">WhatsApp Agent</p></div>
+</div>
+</section>
+
+<footer class="py-8 text-center text-slate-500 text-sm space-y-2">
+<a href="https://wa.me/254754728584" class="text-emerald-400 block">WhatsApp Support</a>
+<a href="/withdraw" class="text-teal-400">Withdraw</a>
+</footer>
+
 <script>
+function openMenu(){document.getElementById("drawer").classList.add("open")}
+function closeMenu(){document.getElementById("drawer").classList.remove("open")}
 const plans=[{n:"Starter",e:"🌱",m:50,d:7},{n:"Bronze",e:"🥉",m:100,d:7},{n:"Silver",e:"🥈",m:200,d:10},{n:"Gold",e:"👑",m:500,d:10,popular:1},{n:"Platinum",e:"💎",m:1000,d:14},{n:"Diamond",e:"💠",m:2000,d:14},{n:"Ruby",e:"❤️",m:3000,d:14},{n:"Emerald",e:"💚",m:5000,d:14},{n:"VIP",e:"⭐",m:7500,d:21},{n:"Elite",e:"🏆",m:10000,d:21,tide:1}];
-document.getElementById("plans").innerHTML=plans.map(p=>{const ring=p.popular?"border-amber-400/70":p.tide?"border-purple-400/70":"border-slate-700";return `<div class="plan-card bg-slate-900 border ${ring} rounded-2xl p-6 relative">${p.popular?'<div class="absolute top-0 right-0 badge-popular text-[10px] font-black px-3 py-1 rounded-bl-xl text-white">POPULAR</div>':''}${p.tide?'<div class="absolute top-0 right-0 badge-tide text-[10px] font-black px-3 py-1 rounded-bl-xl text-white">HIGH TIDE</div>':''}<div class="font-bold text-lg mb-2">${p.e} ${p.n}</div><div class="text-3xl font-black text-amber-400">$${p.m}+</div><div class="text-sm text-teal-300">350%/day · grows hourly · ${p.d}d</div><a href="/dashboard" class="mt-4 block text-center ${p.popular?'bg-amber-500 text-slate-900':p.tide?'bg-purple-600':'bg-teal-600'} rounded-xl py-3 font-bold text-sm">Invest Now</a></div>`}).join("");
-const names=["Tendai M.","Chipo R.","Grace N.","Farai D.","Blessing K."];const amounts=[1250,5100,12500,48000,89000];let ticks=[];for(let i=0;i<20;i++)ticks.push(`✅ ${names[i%5]} has just withdrawn $${amounts[i%5].toLocaleString()}`);document.getElementById("ticker").innerHTML=ticks.concat(ticks).map(t=>`<span>${t}</span>`).join("");
-</script></body></html>
+document.getElementById("plans").innerHTML=plans.map(p=>{
+  const ring=p.popular?"border-amber-400/70":p.tide?"border-purple-400/70":"border-slate-700";
+  return `<div class="plan-card bg-slate-900 border ${ring} rounded-2xl p-6 relative">
+    ${p.popular?'<div class="absolute top-0 right-0 badge-popular text-[10px] font-black px-3 py-1 rounded-bl-xl text-white">POPULAR</div>':''}
+    ${p.tide?'<div class="absolute top-0 right-0 badge-tide text-[10px] font-black px-3 py-1 rounded-bl-xl text-white">HIGH TIDE</div>':''}
+    <div class="font-bold text-lg mb-2">${p.e} ${p.n}</div>
+    <div class="text-3xl font-black text-amber-400">$${p.m}+</div>
+    <div class="text-sm text-teal-300">350%/day · grows hourly · ${p.d}d</div>
+    <a href="/dashboard" class="mt-4 block text-center ${p.popular?'bg-amber-500 text-slate-900':p.tide?'bg-purple-600':'bg-teal-600'} rounded-xl py-3 font-bold text-sm">Invest Now</a>
+  </div>`;
+}).join("");
+const names=["Tendai M.","Chipo R.","Grace N.","Farai D.","Blessing K."];
+const amounts=[1250,5100,12500,48000,89000];
+let ticks=[];
+for(let i=0;i<20;i++)ticks.push(`✅ ${names[i%5]} has just withdrawn $${amounts[i%5].toLocaleString()}`);
+document.getElementById("ticker").innerHTML=ticks.concat(ticks).map(t=>`<span>${t}</span>`).join("");
+</script>
+</body>
+</html>
