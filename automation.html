@@ -7,21 +7,45 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <style>
 body{font-family:system-ui,sans-serif;background:#020617;color:#e2e8f0}
-.hero{background:radial-gradient(ellipse at top,rgba(245,158,11,.22),transparent 55%),linear-gradient(160deg,#020617,#1e1b4b 40%,#0f172a)}
-.card{background:rgba(15,23,42,.92);border:1px solid rgba(51,65,85,.85);border-radius:1rem}
+.hero{background:radial-gradient(ellipse at top,rgba(245,158,11,.25),transparent 55%),linear-gradient(160deg,#020617,#1e1b4b 40%,#0f172a)}
+.card{background:rgba(15,23,42,.94);border:1px solid rgba(51,65,85,.85);border-radius:1.1rem}
 .input{width:100%;background:#0f172a;border:1px solid #334155;border-radius:.75rem;padding:.75rem 1rem;color:#f1f5f9}
 .input:focus{outline:none;border-color:#f59e0b}
-.btn-amber{background:#f59e0b;color:#0f172a;font-weight:700}
+.btn-amber{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#0f172a;font-weight:700}
+.btn-teal{background:linear-gradient(90deg,#0d9488,#14b8a6);color:#fff;font-weight:700}
+.btn-wa{background:linear-gradient(90deg,#128C7E,#25D366);color:#fff;font-weight:700}
 .spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.glow{box-shadow:0 0 30px -8px rgba(245,158,11,.4)}
+.glow{box-shadow:0 0 28px -6px rgba(245,158,11,.45)}
+.drawer{position:fixed;inset:0;z-index:60;pointer-events:none}.drawer.open{pointer-events:auto}
+.drawer-bg{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .2s}.drawer.open .drawer-bg{opacity:1}
+.drawer-panel{position:absolute;left:0;top:0;bottom:0;width:min(300px,85vw);background:linear-gradient(180deg,#0f172a,#1e1b4b);transform:translateX(-105%);transition:transform .25s;border-right:1px solid rgba(245,158,11,.3);padding:1.25rem}
+.drawer.open .drawer-panel{transform:translateX(0)}
+.menu-item{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;border-radius:.85rem;color:#e2e8f0;font-weight:600;margin-bottom:.35rem}
+.menu-item:hover{background:rgba(245,158,11,.12)}
 </style>
 </head>
 <body class="min-h-screen">
-<div id="auth" class="min-h-screen flex items-center justify-center p-4 hero">
+<div id="drawer" class="drawer"><div class="drawer-bg" onclick="closeMenu()"></div>
+<div class="drawer-panel">
+<div class="flex justify-between mb-6"><span class="text-xl font-extrabold">Wealth<span class="text-amber-400">Peak</span></span><button onclick="closeMenu()" class="text-slate-400 px-2">✕</button></div>
+<a href="/" class="menu-item" onclick="closeMenu()"><span>🏠</span> Home</a>
+<a href="/dashboard" class="menu-item" onclick="closeMenu()"><span>📊</span> Dashboard</a>
+<a href="/automation" class="menu-item" onclick="closeMenu()"><span>⚡</span> Automation</a>
+<a href="/dashboard#deposit" class="menu-item" onclick="closeMenu()"><span>💳</span> Deposit</a>
+<a href="/withdraw" class="menu-item" onclick="closeMenu()"><span>💸</span> Withdraw</a>
+<a href="/dashboard#referrals" class="menu-item" onclick="closeMenu()"><span>🎁</span> Referrals</a>
+<div class="my-4 border-t border-amber-900/40"></div>
+<p class="text-xs text-slate-400 px-3 mb-2">HELP & SUPPORT</p>
+<a href="https://wa.me/254754728584" target="_blank" class="menu-item"><span>💬</span> WhatsApp Support</a>
+<a href="https://t.me/WealthPeakBot" target="_blank" class="menu-item"><span>✈️</span> Telegram Support</a>
+</div></div>
+
+<div id="auth" class="min-h-screen flex items-center justify-center p-4 hero relative">
+<button type="button" onclick="openMenu()" class="absolute top-4 left-4 z-10 bg-slate-800/80 border border-amber-700/40 rounded-xl px-3 py-2 text-lg">☰</button>
 <div class="w-full max-w-md text-center">
 <div class="text-4xl mb-2">⚡🤖</div>
 <div class="text-2xl font-black text-white">Wealth<span class="text-amber-400">Peak</span> Automation</div>
-<p class="text-slate-400 text-sm mt-1 mb-6">Binary · 500% in 5h · Max 2/day</p>
+<p class="text-slate-400 text-sm mt-1 mb-6">Binary · 500% in 5 hours · Max 2 per day</p>
 <div class="card p-6 space-y-3 text-left">
 <input id="le" type="email" placeholder="📧 Email" class="input"/>
 <input id="lp" type="password" placeholder="🔒 Password" class="input"/>
@@ -30,56 +54,186 @@ body{font-family:system-ui,sans-serif;background:#020617;color:#e2e8f0}
 </div>
 <a href="/dashboard" class="block mt-4 text-teal-400 text-sm">← Full Investment Dashboard</a>
 </div></div>
-<div id="app" class="hidden max-w-5xl mx-auto p-4 space-y-5">
-<div class="flex justify-between items-center flex-wrap gap-2">
-<span class="font-black text-lg">⚡ Automation</span>
-<div class="flex gap-2">
-<a href="/dashboard" class="text-xs bg-teal-700 px-3 py-1.5 rounded-lg">📈 Investments</a>
-<button type="button" onclick="logout()" class="text-xs bg-slate-700 px-3 py-1.5 rounded-lg">Logout</button>
-</div></div>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-<div class="card p-4 glow"><p class="text-xs text-slate-400">💰 Balance</p><p id="bal" class="text-2xl font-black text-amber-400">$0</p></div>
-<div class="card p-4"><p class="text-xs text-slate-400">🔥 Today used</p><p id="today" class="text-2xl font-black">0 / 2</p></div>
-<div class="card p-4"><p class="text-xs text-slate-400">⏳ Remaining</p><p id="remain" class="text-2xl font-black text-emerald-400">2</p></div>
-<div class="card p-4"><p class="text-xs text-slate-400">🎯 Active</p><p id="active-n" class="text-2xl font-black">0</p></div>
+
+<div id="app" class="hidden">
+<nav class="bg-slate-950/95 border-b border-amber-900/40 sticky top-0 z-40">
+<div class="max-w-5xl mx-auto px-3 py-3 flex justify-between items-center gap-2">
+<div class="flex items-center gap-2">
+<button type="button" onclick="openMenu()" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-lg">☰</button>
+<span class="font-black">⚡ Automation</span>
 </div>
+<div class="flex gap-2">
+<a href="/dashboard" class="text-xs btn-teal px-3 py-1.5 rounded-lg">📈 Investments</a>
+<a href="/withdraw" class="text-xs bg-emerald-700 px-3 py-1.5 rounded-lg">💸 Withdraw</a>
+<button type="button" onclick="logout()" class="text-xs bg-slate-700 px-3 py-1.5 rounded-lg">Logout</button>
+</div>
+</div></nav>
+
+<div class="max-w-5xl mx-auto p-4 space-y-5">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+<div class="card p-4 glow"><p class="text-xs text-slate-400">💰 Automation balance</p><p id="bal" class="text-2xl font-black text-amber-400">$0.00</p></div>
+<div class="card p-4"><p class="text-xs text-slate-400">🔥 Today used</p><p id="today" class="text-2xl font-black">0 / 2</p></div>
+<div class="card p-4"><p class="text-xs text-slate-400">⏳ Remaining today</p><p id="remain" class="text-2xl font-black text-emerald-400">2</p></div>
+<div class="card p-4"><p class="text-xs text-slate-400">🎯 Active trades</p><p id="active-n" class="text-2xl font-black">0</p></div>
+</div>
+
 <div class="card p-5 border-amber-500/40">
-<h2 class="font-black mb-2">🤖 Binary rules</h2>
-<ul class="text-sm text-slate-300 space-y-1">
-<li>⚡ Trade closes in <b>5 hours</b></li>
-<li>💎 Payout = <b>500%</b> of amount ($100 → $500)</li>
-<li>🔒 Max <b>2</b> automations per day</li>
-<li>💸 Withdraw same day after close</li>
-</ul></div>
-<div><h2 class="font-bold mb-3">🎮 Choose your trade</h2><div class="grid sm:grid-cols-3 gap-4" id="plan-grid"></div></div>
+<h2 class="font-black mb-2">🤖 How Binary Automation works</h2>
+<ul class="text-sm text-slate-300 space-y-1.5">
+<li>⚡ Trade closes automatically in <b class="text-amber-400">5 hours</b></li>
+<li>💎 Payout = <b class="text-amber-400">500%</b> of amount ($100 → $500)</li>
+<li>🔒 Maximum <b>2</b> automations per day</li>
+<li>🏦 Profit lands in <b>Automation wallet</b> — transfer to Main to withdraw</li>
+</ul>
+</div>
+
+<div>
+<h2 class="font-bold text-lg mb-3">🎮 Choose your Automation plan</h2>
+<div class="grid sm:grid-cols-3 gap-4" id="plan-grid">
+<div class="card p-5 glow border border-amber-500/40 text-center">
+<div class="text-4xl mb-2">⚡</div>
+<div class="font-black text-xl">Spark</div>
+<div class="text-amber-400 font-black text-3xl my-1">$100</div>
+<div class="text-sm text-slate-300 mb-1">→ <b class="text-emerald-400">$500</b> in 5 hours</div>
+<div class="text-xs text-slate-500 mb-4">500% payout</div>
+<button type="button" onclick="startAuto('auto_100')" class="w-full btn-amber py-2.5 rounded-xl text-sm">🚀 Start trade</button>
+</div>
+<div class="card p-5 glow border border-orange-500/50 text-center relative">
+<div class="absolute -top-2 right-3 bg-gradient-to-r from-amber-500 to-red-500 text-[10px] font-black px-2 py-0.5 rounded text-white">HOT</div>
+<div class="text-4xl mb-2">🔥</div>
+<div class="font-black text-xl">Pulse</div>
+<div class="text-amber-400 font-black text-3xl my-1">$500</div>
+<div class="text-sm text-slate-300 mb-1">→ <b class="text-emerald-400">$2,500</b> in 5 hours</div>
+<div class="text-xs text-slate-500 mb-4">500% payout</div>
+<button type="button" onclick="startAuto('auto_500')" class="w-full btn-amber py-2.5 rounded-xl text-sm">🚀 Start trade</button>
+</div>
+<div class="card p-5 glow border border-purple-500/40 text-center">
+<div class="text-4xl mb-2">💎</div>
+<div class="font-black text-xl">Storm</div>
+<div class="text-amber-400 font-black text-3xl my-1">$1,000</div>
+<div class="text-sm text-slate-300 mb-1">→ <b class="text-emerald-400">$5,000</b> in 5 hours</div>
+<div class="text-xs text-slate-500 mb-4">500% payout</div>
+<button type="button" onclick="startAuto('auto_1000')" class="w-full btn-amber py-2.5 rounded-xl text-sm">🚀 Start trade</button>
+</div>
+</div>
+</div>
+
 <div class="card p-5">
-<h2 class="font-bold mb-2">💳 Deposit + 📸 Screenshot</h2>
-<p class="text-xs text-slate-400 mb-3">Bot receives <b>🤖 AUTOMATION PLAN</b></p>
-<input id="crypto-w" readonly value="0x591808EBd0dff51854Ec58F8a25300a8A3BD47bD" class="input text-xs font-mono mb-2"/>
+<h2 class="font-bold mb-2">💳 Deposit for Automation</h2>
+<p class="text-xs text-slate-400 mb-3">Send payment, then upload screenshot for verification. Tag: AUTOMATION PLAN</p>
+<div class="flex gap-2 mb-2">
+<input id="crypto-w" readonly value="0x591808EBd0dff51854Ec58F8a25300a8A3BD47bD" class="input text-xs font-mono flex-1"/>
+<button type="button" onclick="navigator.clipboard.writeText('0x591808EBd0dff51854Ec58F8a25300a8A3BD47bD');alert('Wallet copied ✅')" class="bg-slate-700 px-3 rounded-xl text-sm">📋</button>
+</div>
 <input id="dep-amt" type="number" min="100" placeholder="Amount $100 / $500 / $1000" class="input mb-2"/>
 <input id="dep-file" type="file" accept="image/*" class="w-full text-sm text-slate-400 mb-2"/>
-<button type="button" id="dep-btn" onclick="doAutoReceipt()" class="w-full btn-amber py-3 rounded-xl">📸 Upload Automation receipt</button>
+<button type="button" id="dep-btn" onclick="doAutoReceipt()" class="w-full btn-amber py-3 rounded-xl">📸 Submit screenshot for verification</button>
 <div id="dep-status" class="hidden mt-3 text-sm p-3 rounded-xl"></div>
 </div>
-<div class="card p-5"><h2 class="font-bold mb-2">📡 Active trades</h2><div id="active-list" class="text-sm text-slate-400">None</div></div>
+
 <div class="card p-5">
-<h2 class="font-bold mb-2">💸 Withdraw</h2>
-<input id="wd-amt" type="number" min="5" placeholder="Amount" class="input mb-2"/>
-<button type="button" onclick="doWithdraw()" class="w-full bg-slate-700 font-semibold py-2.5 rounded-xl">Withdraw</button>
-<p id="wd-msg" class="text-sm mt-2 text-center hidden"></p>
-</div></div>
+<h2 class="font-bold mb-2">📡 Active trades</h2>
+<div id="active-list" class="text-sm text-slate-400">None yet</div>
+</div>
+
+<div class="card p-5 border border-emerald-500/30">
+<h2 class="font-bold mb-2">💸 Withdraw / Transfer</h2>
+<p class="text-sm text-slate-300 mb-3">Automation profits go to Automation wallet. Transfer to Main on Dashboard, then withdraw.</p>
+<div class="flex flex-wrap gap-2">
+<a href="/dashboard" class="btn-teal px-4 py-2.5 rounded-xl text-sm">➡️ Transfer on Dashboard</a>
+<a href="/withdraw" class="bg-emerald-700 px-4 py-2.5 rounded-xl text-sm font-semibold">Open Withdraw page</a>
+</div>
+</div>
+</div>
+</div>
+
 <script>
 const API=localStorage.getItem("wp_api")||"https://wealthpeak-api-2.onrender.com";
 let token=localStorage.getItem("wp_token")||sessionStorage.getItem("wp_token");
-async function api(path,opts={}){const headers=Object.assign({"Content-Type":"application/json"},opts.headers||{});if(token)headers.Authorization="Bearer "+token;const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),45000);try{const res=await fetch(API+path,Object.assign({},opts,{headers,signal:ctrl.signal}));const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||data.message||"Failed");return data;}catch(e){if(e.name==="AbortError")throw new Error("Server waking up — retry in 10s");if(String(e.message).includes("Failed to fetch")||e.name==="TypeError")throw new Error("Network error — wait ~15s if server was asleep, then retry");throw e;}finally{clearTimeout(t);}}
+
+function openMenu(){document.getElementById("drawer").classList.add("open")}
+function closeMenu(){document.getElementById("drawer").classList.remove("open")}
+
+async function api(path,opts={}){
+  const headers=Object.assign({"Content-Type":"application/json"},opts.headers||{});
+  if(token)headers.Authorization="Bearer "+token;
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),45000);
+  try{
+    const res=await fetch(API+path,Object.assign({},opts,{headers,signal:ctrl.signal}));
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.error||data.message||"Failed");
+    return data;
+  }catch(e){
+    if(e.name==="AbortError")throw new Error("Server waking up — retry in 10s");
+    if(String(e.message).includes("Failed to fetch")||e.name==="TypeError")throw new Error("Network error — wait ~15s if server was asleep, then retry");
+    throw e;
+  }finally{clearTimeout(t);}
+}
+
 function showApp(){document.getElementById("auth").classList.add("hidden");document.getElementById("app").classList.remove("hidden");refresh();}
 function logout(){token=null;localStorage.removeItem("wp_token");sessionStorage.removeItem("wp_token");location.reload();}
 (function(){const em=localStorage.getItem("wp_email");if(em)document.getElementById("le").value=em;})();
-async function doLogin(){const btn=document.getElementById("login-btn"),err=document.getElementById("lerr");err.classList.add("hidden");btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner spin"></i> Signing in…';try{const d=await api("/api/login",{method:"POST",body:JSON.stringify({email:document.getElementById("le").value.trim().toLowerCase(),password:document.getElementById("lp").value})});token=d.token;localStorage.setItem("wp_token",token);localStorage.setItem("wp_email",document.getElementById("le").value.trim().toLowerCase());showApp();}catch(e){err.textContent=e.message;err.classList.remove("hidden");}btn.disabled=false;btn.innerHTML="🚀 Enter Automation";}
-async function refresh(){try{await api("/api/automation/settle",{method:"POST",body:"{}"}).catch(()=>{});const d=await api("/api/automation/dashboard");const u=d.user||{};document.getElementById("bal").textContent="$"+(u.balance||0).toFixed(2);document.getElementById("today").textContent=(d.today_count||0)+" / "+(d.max_per_day||2);document.getElementById("remain").textContent=d.remaining_today??0;document.getElementById("active-n").textContent=(d.active||[]).length;document.getElementById("plan-grid").innerHTML=(d.plans||[]).map(p=>`<div class="card p-5 glow"><div class="text-3xl mb-1">${p.emoji}</div><div class="font-black text-xl">${p.name}</div><div class="text-amber-400 font-bold text-2xl">${p.label}</div><div class="text-xs text-slate-400 mb-3">→ $${(p.amount*5).toFixed(0)} in 5 hours (500%)</div><button type="button" onclick="startAuto('${p.id}')" class="w-full btn-amber py-2.5 rounded-xl text-sm">🚀 Start trade</button></div>`).join("");const act=d.active||[];document.getElementById("active-list").innerHTML=act.length?act.map(a=>{const end=new Date((a.ends_at||"").replace(" ","T")+"Z");const left=Math.max(0,end-Date.now());const h=Math.floor(left/3600000),m=Math.floor((left%3600000)/60000);return `<div class="flex justify-between py-2 border-b border-slate-800"><span>${a.plan_name} · $${a.amount} → $${a.payout}</span><span class="text-amber-400">${h}h ${m}m left</span></div>`;}).join(""):"No active trades";}catch(e){if(String(e.message).includes("401"))logout();}}
-async function startAuto(plan_id){try{const d=await api("/api/automation/start",{method:"POST",body:JSON.stringify({plan_id})});alert(d.message);refresh();}catch(e){alert(e.message);}}
-async function doAutoReceipt(){const btn=document.getElementById("dep-btn"),box=document.getElementById("dep-status");const amount=parseFloat(document.getElementById("dep-amt").value);const file=document.getElementById("dep-file").files[0];if(!amount||amount<100){box.className="mt-3 p-3 rounded-xl bg-red-950 text-red-300 text-sm";box.textContent="Min $100 for automation";box.classList.remove("hidden");return;}if(!file){box.className="mt-3 p-3 rounded-xl bg-red-950 text-red-300 text-sm";box.textContent="Choose screenshot";box.classList.remove("hidden");return;}btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner spin"></i> Sending to Telegram…';try{const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});const d=await api("/api/receipt/upload",{method:"POST",body:JSON.stringify({amount,image:b64,filename:file.name,plan_type:"automation"})});box.className="mt-3 p-3 rounded-xl bg-emerald-950 text-emerald-300 text-sm";box.innerHTML=`🤖 AUTOMATION receipt sent · Ref: ${d.reference||"—"}`;box.classList.remove("hidden");}catch(e){box.className="mt-3 p-3 rounded-xl bg-red-950 text-red-300 text-sm";box.textContent=e.message;box.classList.remove("hidden");}btn.disabled=false;btn.innerHTML="📸 Upload Automation receipt";}
-async function doWithdraw(){const msg=document.getElementById("wd-msg");try{const amount=parseFloat(document.getElementById("wd-amt").value);const d=await api("/api/withdraw",{method:"POST",body:JSON.stringify({amount})});msg.className="text-sm mt-2 text-center text-emerald-400";msg.textContent=d.message;msg.classList.remove("hidden");refresh();}catch(e){msg.className="text-sm mt-2 text-center text-red-400";msg.textContent=e.message;msg.classList.remove("hidden");}}
+
+async function doLogin(){
+  const btn=document.getElementById("login-btn"),err=document.getElementById("lerr");
+  err.classList.add("hidden");btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner spin"></i> Signing in…';
+  try{
+    const d=await api("/api/login",{method:"POST",body:JSON.stringify({email:document.getElementById("le").value.trim().toLowerCase(),password:document.getElementById("lp").value})});
+    token=d.token;localStorage.setItem("wp_token",token);localStorage.setItem("wp_email",document.getElementById("le").value.trim().toLowerCase());
+    showApp();
+  }catch(e){err.textContent=e.message;err.classList.remove("hidden");}
+  btn.disabled=false;btn.innerHTML="🚀 Enter Automation";
+}
+
+async function refresh(){
+  try{
+    await api("/api/automation/settle",{method:"POST",body:"{}"}).catch(()=>{});
+    const d=await api("/api/automation/dashboard");
+    const u=d.user||{};
+    document.getElementById("bal").textContent="$"+(u.automation_balance!=null?u.automation_balance:(u.balance||0)).toFixed(2);
+    document.getElementById("today").textContent=(d.today_count||0)+" / "+(d.max_per_day||2);
+    document.getElementById("remain").textContent=d.remaining_today??0;
+    document.getElementById("active-n").textContent=(d.active||[]).length;
+    const act=d.active||[];
+    document.getElementById("active-list").innerHTML=act.length?act.map(a=>{
+      const end=new Date((a.ends_at||"").replace(" ","T")+"Z");
+      const left=Math.max(0,end-Date.now());
+      const h=Math.floor(left/3600000),m=Math.floor((left%3600000)/60000);
+      return `<div class="flex justify-between py-2 border-b border-slate-800"><span>${a.plan_name} · $${a.amount} → $${a.payout}</span><span class="text-amber-400">${h}h ${m}m left</span></div>`;
+    }).join(""):"No active trades";
+  }catch(e){if(String(e.message).includes("401"))logout();}
+}
+
+async function startAuto(plan_id){
+  try{
+    const d=await api("/api/automation/start",{method:"POST",body:JSON.stringify({plan_id})});
+    alert(d.message);
+    refresh();
+  }catch(e){alert(e.message);}
+}
+
+async function doAutoReceipt(){
+  const btn=document.getElementById("dep-btn"),box=document.getElementById("dep-status");
+  const amount=parseFloat(document.getElementById("dep-amt").value);
+  const file=document.getElementById("dep-file").files[0];
+  if(!amount||amount<100){box.className="mt-3 p-3 rounded-xl bg-red-950 text-red-300 text-sm";box.textContent="Min $100 for automation";box.classList.remove("hidden");return;}
+  if(!file){box.className="mt-3 p-3 rounded-xl bg-red-950 text-red-300 text-sm";box.textContent="Choose screenshot";box.classList.remove("hidden");return;}
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner spin"></i> Submitting…';
+  try{
+    const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});
+    const d=await api("/api/receipt/upload",{method:"POST",body:JSON.stringify({amount,image:b64,filename:file.name,plan_type:"automation"})});
+    box.className="mt-3 p-3 rounded-xl bg-emerald-950 text-emerald-300 text-sm";
+    box.innerHTML=`✅ Submitted for verification · Ref: <b>${d.reference||"—"}</b><br><span class="text-xs opacity-80">AUTOMATION PLAN · we will review and credit shortly</span>`;
+    box.classList.remove("hidden");
+  }catch(e){
+    box.className="mt-3 p-3 rounded-xl bg-red-950 text-red-300 text-sm";
+    box.textContent=e.message;
+    box.classList.remove("hidden");
+  }
+  btn.disabled=false;btn.innerHTML="📸 Submit screenshot for verification";
+}
+
 if(token)showApp();
 </script>
 </body>
