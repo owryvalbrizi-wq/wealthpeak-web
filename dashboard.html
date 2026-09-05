@@ -18,7 +18,7 @@
 <div class="wp-ticker-wrap py-2"><div class="wp-ticker" id="ticker"></div></div>
 <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 auth-hero">
 <div class="w-full max-w-md">
-<div class="text-center mb-6"><span class="text-2xl font-extrabold text-white">Wealth<span class="text-teal-400">Peak</span></span></div>
+<div class="text-center mb-6"><span class="text-2xl font-extrabold text-white">Wealth<span class="text-teal-400">Peak</span></span><p class="text-teal-200 text-sm mt-1">💎 Daily plans · ⚡ Automation</p></div>
 <div class="flex bg-slate-800 rounded-xl p-1 mb-4">
 <button id="tab-login" class="flex-1 py-2 rounded-lg font-semibold text-sm bg-white text-slate-900">Login</button>
 <button id="tab-register" class="flex-1 py-2 rounded-lg font-semibold text-sm text-slate-300">Register</button>
@@ -36,30 +36,33 @@
 <button id="reg-btn" onclick="doRegister()" class="w-full bg-teal-600 text-white font-semibold py-3 rounded-xl">Create Account</button>
 <p id="reg-error" class="text-red-500 text-sm text-center hidden"></p>
 </div>
-<div class="mt-6 bg-white rounded-2xl p-5 text-center border border-emerald-100">
+<a href="/automation" class="mt-4 block text-center bg-amber-500 text-slate-900 font-bold py-3 rounded-xl">⚡ Open Automation (Binary 500%)</a>
+<div class="mt-4 bg-white rounded-2xl p-5 text-center border border-emerald-100">
 <p class="text-sm font-semibold mb-1">Join our community</p>
-<p class="text-xs text-slate-500 mb-3">Text our agent to join the WhatsApp group</p>
-<a href="https://wa.me/254754728584?text=Hello%2C%20I%20want%20to%20join%20the%20WealthPeak%20WhatsApp%20group" target="_blank" class="inline-flex items-center justify-center gap-2 w-full bg-emerald-600 text-white font-semibold py-3 rounded-xl"><i class="fab fa-whatsapp text-xl"></i> Text agent to join WhatsApp group</a>
+<a href="https://wa.me/254754728584?text=Hello%2C%20I%20want%20to%20join%20the%20WealthPeak%20WhatsApp%20group" target="_blank" class="inline-flex items-center justify-center gap-2 w-full bg-emerald-600 text-white font-semibold py-3 rounded-xl"><i class="fab fa-whatsapp text-xl"></i> WhatsApp group</a>
 </div>
 </div>
 </div>
 <div id="dashboard" class="hidden">
 <nav class="bg-slate-900 text-white sticky top-0 z-40">
-<div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+<div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center flex-wrap gap-2">
 <span class="font-bold">Wealth<span class="text-teal-400">Peak</span></span>
+<div class="flex gap-2 items-center">
+<a href="/automation" class="text-xs bg-amber-500 text-slate-900 px-3 py-1.5 rounded-lg font-bold">⚡ Automation</a>
 <button onclick="logout()" class="text-sm bg-slate-700 px-3 py-1.5 rounded-lg">Logout</button>
+</div>
 </div>
 </nav>
 <div class="bg-amber-50 border-b border-amber-200 py-2.5 px-4 text-center text-sm text-amber-900">
-If you don't see your payment method, message our agent on <a href="https://wa.me/254754728584?text=Hello%2C%20I%20need%20help%20with%20payment%20methods" target="_blank" class="font-semibold text-emerald-700 underline">WhatsApp</a>.
+Need help? Message agent on <a href="https://wa.me/254754728584?text=Hello%2C%20I%20need%20help%20with%20payment%20methods" target="_blank" class="font-semibold text-emerald-700 underline">WhatsApp</a>.
 </div>
 <div class="max-w-6xl mx-auto px-4 py-8 grid lg:grid-cols-3 gap-6">
 <div class="lg:col-span-2 space-y-6">
 <div class="grid grid-cols-2 gap-4">
-<div class="bg-white rounded-2xl p-5 shadow-sm"><p class="text-sm text-slate-500">Available Balance</p><p id="stat-balance" class="text-2xl font-bold">$0.00</p></div>
-<div class="bg-white rounded-2xl p-5 shadow-sm"><p class="text-sm text-slate-500">Total Invested</p><p id="stat-invested" class="text-2xl font-bold">$0.00</p></div>
-<div class="bg-white rounded-2xl p-5 shadow-sm"><p class="text-sm text-slate-500">Total Earned</p><p id="stat-earned" class="text-2xl font-bold text-emerald-600">$0.00</p></div>
-<div class="bg-white rounded-2xl p-5 shadow-sm"><p class="text-sm text-slate-500">Referral ($20 each)</p><p id="stat-referral" class="text-2xl font-bold text-amber-600">$0.00</p></div>
+<div class="bg-white rounded-2xl p-5 shadow-sm"><p class="text-sm text-slate-500">💰 Available Balance</p><p id="stat-balance" class="text-2xl font-bold">$0.00</p></div>
+<div class="bg-white rounded-2xl p-5 shadow-sm"><p class="text-sm text-slate-500">📊 Total Invested</p><p id="stat-invested" class="text-2xl font-bold">$0.00</p></div>
+<div class="bg-white rounded-2xl p-5 shadow-sm"><p class="text-sm text-slate-500">✨ Total Earned</p><p id="stat-earned" class="text-2xl font-bold text-emerald-600">$0.00</p></div>
+<div class="bg-white rounded-2xl p-5 shadow-sm"><p class="text-sm text-slate-500">🎁 Referral ($20 each)</p><p id="stat-referral" class="text-2xl font-bold text-amber-600">$0.00</p></div>
 </div>
 <div class="referral-card text-white rounded-2xl p-5">
 <p class="font-semibold text-lg">💎 Invite Friends & Earn $20</p>
@@ -68,17 +71,17 @@ If you don't see your payment method, message our agent on <a href="https://wa.m
 <button onclick="copyRef()" class="bg-white/20 px-3 py-1 rounded-lg text-sm">Copy</button></div>
 </div>
 <div class="bg-white rounded-2xl p-6 shadow-sm">
-<h2 class="font-bold text-lg mb-3">Active Investments</h2>
+<h2 class="font-bold text-lg mb-3">📡 Active Investments</h2>
 <div id="invest-list" class="text-slate-400 text-sm">No active investments yet.</div>
 </div>
 <div class="bg-white rounded-2xl p-6 shadow-sm">
-<h2 class="font-bold text-lg mb-3">Recent Transactions</h2>
+<h2 class="font-bold text-lg mb-3">📜 Recent Transactions</h2>
 <div id="tx-list" class="text-slate-400 text-sm">No transactions yet.</div>
 </div>
 </div>
 <div class="space-y-6">
 <div class="bg-white rounded-2xl p-6 shadow-sm">
-<h2 class="font-bold text-lg mb-1">Deposit Funds</h2>
+<h2 class="font-bold text-lg mb-1">💳 Deposit Funds</h2>
 <p class="text-sm text-slate-500 mb-4">Crypto · Agent · <span class="text-slate-400">Zetupay soon</span></p>
 <div class="flex gap-1 bg-slate-100 rounded-xl p-1 mb-4">
 <button type="button" onclick="setPay('crypto')" id="tab-crypto" class="flex-1 py-2 rounded-lg text-xs font-semibold bg-white shadow">Crypto</button>
@@ -96,27 +99,27 @@ If you don't see your payment method, message our agent on <a href="https://wa.m
 <div id="crypto-status" class="hidden mt-3 text-sm p-3 rounded-xl"></div>
 </div>
 <div id="sec-agent" class="hidden">
-<p class="text-sm text-slate-600 mb-3">For Zimbabwe, Zambia & Malawi — message our agent for deposit help.</p>
+<p class="text-sm text-slate-600 mb-3">For Zimbabwe, Zambia & Malawi — message our agent.</p>
 <select id="agent-country" class="w-full border rounded-xl px-4 py-2.5 mb-3"><option value="ZW">🇿🇼 Zimbabwe</option><option value="ZM">🇿🇲 Zambia</option><option value="MW">🇲🇼 Malawi</option></select>
 <input id="agent-amount" type="number" min="50" placeholder="Amount USD" class="w-full border rounded-xl px-4 py-2.5 mb-3"/>
-<a id="agent-wa" href="#" target="_blank" class="w-full inline-flex justify-center gap-2 bg-emerald-600 text-white font-semibold py-3 rounded-xl"><i class="fab fa-whatsapp"></i> Message agent on WhatsApp</a>
+<a id="agent-wa" href="https://wa.me/254754728584" target="_blank" class="w-full inline-flex justify-center gap-2 bg-emerald-600 text-white font-semibold py-3 rounded-xl"><i class="fab fa-whatsapp"></i> Message agent</a>
 </div>
 </div>
 <div class="bg-white rounded-2xl p-6 shadow-sm">
-<h2 class="font-bold text-lg mb-1">Upload payment receipt</h2>
-<p class="text-sm text-slate-500 mb-3">After payment, upload your screenshot for confirmation.</p>
+<h2 class="font-bold text-lg mb-1">📸 Upload payment receipt</h2>
+<p class="text-sm text-slate-500 mb-3">After payment, upload screenshot for confirmation.</p>
 <input id="receipt-amount" type="number" min="50" placeholder="Amount paid USD" class="w-full border rounded-xl px-4 py-2.5 mb-3"/>
 <input id="receipt-file" type="file" accept="image/*" class="w-full text-sm mb-3"/>
 <button id="receipt-btn" type="button" onclick="doReceipt()" class="w-full bg-slate-800 text-white font-semibold py-3 rounded-xl"><i class="fas fa-upload"></i> Upload receipt</button>
 <div id="receipt-status" class="hidden mt-3 text-sm p-3 rounded-xl"></div>
 </div>
 <div class="bg-white rounded-2xl p-6 shadow-sm">
-<h2 class="font-bold text-lg mb-3">Investment Plans</h2>
+<h2 class="font-bold text-lg mb-3">🎮 Investment Plans</h2>
 <div id="plan-cards" class="space-y-3 text-sm text-slate-400">Loading...</div>
 </div>
 <div class="bg-white rounded-2xl p-6 shadow-sm">
-<h2 class="font-bold text-lg mb-2">Withdraw</h2>
-<p class="text-xs text-slate-500 mb-3">You can only withdraw after your plan end days (7, 10 or 14 days depending on the plan).</p>
+<h2 class="font-bold text-lg mb-2">💸 Withdraw</h2>
+<p class="text-xs text-slate-500 mb-3">Only after your plan end days (7, 10 or 14 days).</p>
 <input id="withdraw-amount" type="number" min="5" placeholder="Amount" class="w-full border rounded-xl px-4 py-3 mb-3"/>
 <button onclick="doWithdraw()" class="w-full bg-slate-700 text-white font-semibold py-2.5 rounded-xl">Withdraw</button>
 <p id="withdraw-msg" class="text-sm mt-2 text-center hidden"></p>
@@ -139,6 +142,7 @@ async function api(path, opts={}){
 }
 function showDash(){document.getElementById("auth-screen").classList.add("hidden");document.getElementById("dashboard").classList.remove("hidden");refresh();}
 function logout(){token=null;localStorage.removeItem("wp_token");location.reload();}
+function copyRef(){navigator.clipboard.writeText(document.getElementById("my-referral-code").textContent);}
 document.getElementById("tab-login").onclick=()=>{document.getElementById("login-form").classList.remove("hidden");document.getElementById("register-form").classList.add("hidden");document.getElementById("tab-login").className="flex-1 py-2 rounded-lg font-semibold text-sm bg-white text-slate-900";document.getElementById("tab-register").className="flex-1 py-2 rounded-lg font-semibold text-sm text-slate-300";};
 document.getElementById("tab-register").onclick=()=>{document.getElementById("register-form").classList.remove("hidden");document.getElementById("login-form").classList.add("hidden");document.getElementById("tab-register").className="flex-1 py-2 rounded-lg font-semibold text-sm bg-white text-slate-900";document.getElementById("tab-login").className="flex-1 py-2 rounded-lg font-semibold text-sm text-slate-300";};
 async function doLogin(){
@@ -147,7 +151,7 @@ async function doLogin(){
   const email=document.getElementById("login-email").value.trim().toLowerCase(), password=document.getElementById("login-password").value;
   if(!email||!password){err.textContent="Enter email and password";err.classList.remove("hidden");return;}
   btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Signing in...';
-  try{const d=await api("/api/login",{method:"POST",body:JSON.stringify({email,password})});token=d.token;localStorage.setItem("wp_token",token);localStorage.setItem("wp_email",email);showDash();}
+  try{const d=await api("/api/login",{method:"POST",body:JSON.stringify({email,password})});token=d.token;localStorage.setItem("wp_token",token);showDash();}
   catch(e){err.textContent=e.message;err.classList.remove("hidden");}
   btn.disabled=false;btn.textContent="Login";
 }
@@ -158,7 +162,7 @@ async function doRegister(){
   if(full_name.length<2){err.textContent="Enter full name";err.classList.remove("hidden");return;}
   if(!email.includes("@")){err.textContent="Valid email required";err.classList.remove("hidden");return;}
   if(password.length<6){err.textContent="Password min 6 chars";err.classList.remove("hidden");return;}
-  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Creating...';
+  btn.disabled=true;
   try{const d=await api("/api/register",{method:"POST",body:JSON.stringify({full_name,email,password})});token=d.token;localStorage.setItem("wp_token",token);showDash();}
   catch(e){err.textContent=e.message;err.classList.remove("hidden");}
   btn.disabled=false;btn.textContent="Create Account";
@@ -213,14 +217,13 @@ async function doReceipt(){
   if(!amount||amount<50){box.className="mt-3 p-3 rounded-xl bg-red-50 text-red-800 text-sm";box.textContent="Enter amount (min $50)";box.classList.remove("hidden");return;}
   if(!file){box.className="mt-3 p-3 rounded-xl bg-red-50 text-red-800 text-sm";box.textContent="Choose screenshot";box.classList.remove("hidden");return;}
   btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Submitting...';
-  box.className="mt-3 p-3 rounded-xl bg-blue-50 text-blue-800 text-sm";box.innerHTML='<i class="fas fa-spinner fa-spin"></i> Uploading and sending to agent...';box.classList.remove("hidden");
   try{
     const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});
-    const d=await api("/api/receipt/upload",{method:"POST",body:JSON.stringify({amount,image:b64,filename:file.name})});
+    const d=await api("/api/receipt/upload",{method:"POST",body:JSON.stringify({amount,image:b64,filename:file.name,plan_type:"investment"})});
     box.className="mt-3 p-3 rounded-xl bg-emerald-50 text-emerald-800 text-sm";
     box.innerHTML=`Receipt submitted · Ref: ${d.reference||"—"} · Pending review`;
-    refresh();
-  }catch(e){box.className="mt-3 p-3 rounded-xl bg-red-50 text-red-800 text-sm";box.textContent=e.message;}
+    box.classList.remove("hidden");refresh();
+  }catch(e){box.className="mt-3 p-3 rounded-xl bg-red-50 text-red-800 text-sm";box.textContent=e.message;box.classList.remove("hidden");}
   btn.disabled=false;btn.innerHTML='<i class="fas fa-upload"></i> Upload receipt';
 }
 async function doWithdraw(){
@@ -231,22 +234,12 @@ async function doWithdraw(){
 function setPay(m){
   document.getElementById("sec-crypto").classList.toggle("hidden", m!=="crypto");
   document.getElementById("sec-agent").classList.toggle("hidden", m!=="agent");
-  document.getElementById("tab-crypto").className="flex-1 py-2 rounded-lg text-xs font-semibold "+(m==="crypto"?"bg-white shadow":"text-slate-600");
-  document.getElementById("tab-agent").className="flex-1 py-2 rounded-lg text-xs font-semibold "+(m==="agent"?"bg-white shadow":"text-slate-600");
-  if(m==="agent") updateWA();
+  document.getElementById("tab-crypto").className=m==="crypto"?"flex-1 py-2 rounded-lg text-xs font-semibold bg-white shadow":"flex-1 py-2 rounded-lg text-xs font-semibold text-slate-600";
+  document.getElementById("tab-agent").className=m==="agent"?"flex-1 py-2 rounded-lg text-xs font-semibold bg-white shadow":"flex-1 py-2 rounded-lg text-xs font-semibold text-slate-600";
 }
-function updateWA(){
-  const c=document.getElementById("agent-country").value, a=document.getElementById("agent-amount").value||"50";
-  const names={ZW:"Zimbabwe",ZM:"Zambia",MW:"Malawi"};
-  document.getElementById("agent-wa").href="https://wa.me/254754728584?text="+encodeURIComponent("Hello, I need deposit assistance on WealthPeak.\nCountry: "+(names[c]||c)+"\nAmount: $"+a);
-}
-function copyRef(){navigator.clipboard.writeText(document.getElementById("my-referral-code").textContent);}
-document.getElementById("agent-country").onchange=updateWA;
-document.getElementById("agent-amount").oninput=updateWA;updateWA();
-const names=["James K.","Grace M.","Peter O.","Amina S.","David N.","Faith W.","Brian T.","Mary C.","John M.","Sarah L."];
-const amts=[1250,1750,2625,3500,5250,7000,10500,14000];
-const items=names.concat(names).map((n,i)=>`<span><i class="fas fa-check-circle text-emerald-400 mr-1"></i><strong>${n}</strong> has withdrawn <strong class="text-emerald-300">$${(amts[i%amts.length]).toLocaleString()}</strong></span>`).join(" ");
-document.getElementById("ticker").innerHTML=items+" "+items;
-(async()=>{if(!token)return;try{await api("/api/dashboard");showDash();}catch(e){localStorage.removeItem("wp_token");token=null;}})();
+const ticks=["✅ Tendai M. withdrew $1,250","✅ Chipo R. withdrew $5,100","✅ Blessing K. withdrew $12,500","⚡ Automation $100→$500","✅ Grace N. withdrew $25,000","✅ Farai D. withdrew $48,000"];
+document.getElementById("ticker").innerHTML=ticks.concat(ticks).map(t=>`<span>${t}</span>`).join("");
+if(token) showDash();
 </script>
-</body></html>
+</body>
+</html>
