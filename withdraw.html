@@ -33,7 +33,7 @@ body{font-family:system-ui,sans-serif;background:#020617;color:#e2e8f0}
 <a href="/dashboard#deposit" class="menu-item" onclick="closeMenu()"><span>💳</span> Deposit</a>
 <a href="/withdraw" class="menu-item" onclick="closeMenu()"><span>💸</span> Withdraw</a>
 <a href="/dashboard#referrals" class="menu-item" onclick="closeMenu()"><span>🎁</span> Referrals</a>
-<div class="my-4 border-t border-emerald-900/50"></div>
+<div class="my-4 border-t border-emerald-800/50"></div>
 <p class="text-xs text-slate-400 px-3 mb-2">HELP & SUPPORT</p>
 <a href="https://wa.me/254754728584" target="_blank" class="menu-item"><span>💬</span> WhatsApp Support</a>
 <a href="https://t.me/WealthPeakBot" target="_blank" class="menu-item"><span>✈️</span> Telegram Support</a>
@@ -42,10 +42,7 @@ body{font-family:system-ui,sans-serif;background:#020617;color:#e2e8f0}
 <div id="auth" class="min-h-screen flex items-center justify-center p-4 auth-hero relative">
 <button type="button" onclick="openMenu()" class="absolute top-4 left-4 z-10 bg-slate-800/80 border border-emerald-700/40 rounded-xl px-3 py-2 text-lg">☰</button>
 <div class="w-full max-w-md">
-<div class="text-center mb-6">
-<div class="text-3xl font-extrabold">Wealth<span class="text-emerald-400">Peak</span></div>
-<p class="text-sm text-emerald-200 mt-1">💸 Withdraw from Main wallet</p>
-</div>
+<div class="text-center mb-6"><div class="text-3xl font-extrabold">Wealth<span class="text-emerald-400">Peak</span></div><p class="text-sm text-emerald-200 mt-1">💸 Withdraw from Main wallet</p></div>
 <div class="card p-6 space-y-3">
 <input id="le" class="input" type="email" placeholder="📧 Email"/>
 <input id="lp" class="input" type="password" placeholder="🔒 Password"/>
@@ -57,7 +54,7 @@ body{font-family:system-ui,sans-serif;background:#020617;color:#e2e8f0}
 
 <div id="app" class="hidden">
 <nav class="bg-slate-950/95 border-b border-emerald-900/40 sticky top-0 z-40">
-<div class="max-w-lg mx-auto px-3 py-3 flex justify-between items-center gap-2">
+<div class="max-w-xl mx-auto px-3 py-3 flex justify-between items-center gap-2">
 <div class="flex items-center gap-2">
 <button type="button" onclick="openMenu()" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-lg">☰</button>
 <span class="font-bold">💸 Withdraw</span>
@@ -67,41 +64,28 @@ body{font-family:system-ui,sans-serif;background:#020617;color:#e2e8f0}
 <button type="button" onclick="logout()" class="text-xs bg-slate-700 px-3 py-1.5 rounded-lg">Logout</button>
 </div>
 </div></nav>
-
-<div class="max-w-lg mx-auto px-4 py-8 space-y-5">
-<div class="card p-6 text-center border border-teal-500/40">
-<p class="text-xs text-slate-400 mb-1">🏦 Main wallet balance</p>
-<p id="main" class="text-4xl font-black text-teal-400">$0.00</p>
-<p class="text-xs text-slate-500 mt-2">Withdrawals only from Main wallet</p>
+<div class="max-w-xl mx-auto px-4 py-6 space-y-5">
+<div class="card p-5 border border-emerald-500/40 text-center">
+<p class="text-xs text-slate-400">🏦 Main wallet balance</p>
+<p id="main" class="text-4xl font-black text-emerald-400 mt-1">$0.00</p>
+<p class="text-xs text-slate-500 mt-2">Withdrawals only from Main · Transfer from Investment / Automation first</p>
 </div>
-
 <div class="card p-5">
-<h2 class="font-bold text-lg mb-1">Request withdrawal</h2>
-<p class="text-xs text-slate-400 mb-4">Transfer profits from Investment / Automation to Main first (on Dashboard)</p>
-<input id="wamt" type="number" min="5" placeholder="Amount (USD)" class="input mb-3"/>
+<h2 class="font-bold text-lg mb-3">Request withdrawal</h2>
+<input id="wamt" type="number" min="5" placeholder="Amount (min $5)" class="input mb-3"/>
 <button type="button" id="wbtn" onclick="wd()" class="w-full btn-em py-3 rounded-xl">💸 Request withdrawal</button>
 <p id="wmsg" class="text-sm text-center hidden mt-3"></p>
 </div>
-
-<div class="card p-5 border border-emerald-500/30">
-<h2 class="font-bold mb-2">🔄 Need more in Main?</h2>
-<p class="text-sm text-slate-300 mb-3">Go to Dashboard → Transfer from Investment or Automation wallet into Main.</p>
-<a href="/dashboard" class="btn-teal w-full py-2.5 rounded-xl flex items-center justify-center text-sm">Open Dashboard to transfer →</a>
-</div>
-
-<a href="https://wa.me/254754728584?text=Hi%20I%20want%20to%20join%20the%20WealthPeak%20community%20%2F%20WhatsApp%20group" target="_blank" class="btn-wa w-full py-4 rounded-xl flex items-center justify-center gap-2 text-sm font-bold shadow-lg">
-💬 Join WhatsApp community / group
-</a>
-</div>
-</div>
-
+<a href="/dashboard" class="block text-center text-sm text-teal-400">🔄 Transfer Investment / Automation → Main</a>
+<a href="https://wa.me/254754728584?text=Hi%20I%20want%20to%20join%20the%20WealthPeak%20community%20%2F%20WhatsApp%20group" target="_blank" class="btn-wa w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm">💬 Join WhatsApp community / group</a>
+</div></div>
 <script>
 const API="https://wealthpeak-api-2.onrender.com";
+function wakeServer(){fetch(API+"/api/plans").catch(function(){});}
+wakeServer();
 let token=localStorage.getItem("wp_token")||sessionStorage.getItem("wp_token");
-
 function openMenu(){document.getElementById("drawer").classList.add("open")}
 function closeMenu(){document.getElementById("drawer").classList.remove("open")}
-
 async function api(path,opts={}){
   const headers=Object.assign({"Content-Type":"application/json"},opts.headers||{});
   if(token)headers.Authorization="Bearer "+token;
@@ -113,17 +97,14 @@ async function api(path,opts={}){
     if(!res.ok)throw new Error(data.error||data.message||"Request failed");
     return data;
   }catch(e){
-    if(e.name==="AbortError")throw new Error("Server waking up — try again");
-    if(String(e.message).includes("Failed to fetch"))throw new Error("Network error — retry");
+    if(e.name==="AbortError")throw new Error("Server waking up — wait 10s and try again");
+    if(String(e.message).includes("Failed to fetch")||e.name==="TypeError")throw new Error("Network error — server waking up, wait 10s and retry");
     throw e;
   }finally{clearTimeout(t);}
 }
-
 function show(){document.getElementById("auth").classList.add("hidden");document.getElementById("app").classList.remove("hidden");load();}
 function logout(){localStorage.removeItem("wp_token");sessionStorage.removeItem("wp_token");location.reload();}
-
 (function(){const em=localStorage.getItem("wp_email");if(em)document.getElementById("le").value=em;})();
-
 async function login(){
   const err=document.getElementById("lerr");err.classList.add("hidden");
   document.getElementById("lb").innerHTML='<i class="fas fa-spinner spin"></i>';
@@ -134,26 +115,23 @@ async function login(){
   }catch(e){err.textContent=e.message;err.classList.remove("hidden");}
   document.getElementById("lb").textContent="🚀 Login to Withdraw";
 }
-
 async function load(){
   try{
     const w=await api("/api/wallets");
     document.getElementById("main").textContent="$"+(w.main_wallet||0).toFixed(2);
   }catch(e){if(String(e.message).includes("401"))logout();}
 }
-
 async function wd(){
   const msg=document.getElementById("wmsg");
   const btn=document.getElementById("wbtn");
   btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner spin"></i>';
   try{
-    const d=await api("/api/withdraw",{method:"POST",body:JSON.stringify({amount:parseFloat(document.getElementById("wamt").value)}));
+    const d=await api("/api/withdraw",{method:"POST",body:JSON.stringify({amount:parseFloat(document.getElementById("wamt").value)})});
     msg.className="text-sm text-center text-emerald-400 mt-3";msg.textContent=d.message;msg.classList.remove("hidden");
     load();
   }catch(e){msg.className="text-sm text-center text-red-400 mt-3";msg.textContent=e.message;msg.classList.remove("hidden");}
   btn.disabled=false;btn.innerHTML="💸 Request withdrawal";
 }
-
 if(token)show();
 </script>
 </body>
