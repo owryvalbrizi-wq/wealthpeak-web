@@ -183,11 +183,12 @@ async function api(path,opts={}){
     if(!res.ok)throw new Error(data.error||data.message||"Request failed");
     return data;
   }catch(e){
-    if(e.name==="AbortError")throw new Error("Server waking up — try again");
+    if(e.name==="AbortError")throw new Error("Server waking up — try again in 15s");
     if(String(e.message).includes("Failed to fetch"))throw new Error("Network error — retry");
     throw e;
   }finally{clearTimeout(t);}
 }
+function wakeServer(){fetch(API+"/api/plans").catch(function(){});}
 function tabs(m){
   document.getElementById("lf").classList.toggle("hidden",m!=="l");
   document.getElementById("rf").classList.toggle("hidden",m!=="r");
@@ -202,7 +203,7 @@ function setPay(m){
     document.getElementById("pay-"+k).className="flex-1 py-2 rounded-lg text-xs font-semibold "+(k===m?"pay-on":"pay-off");
   });
 }
-function show(){document.getElementById("auth").classList.add("hidden");document.getElementById("app").classList.remove("hidden");load();}
+function show(){document.getElementById("auth").classList.add("hidden");document.getElementById("app").classList.remove("hidden");wakeServer();load();}
 function logout(){localStorage.removeItem("wp_token");sessionStorage.removeItem("wp_token");location.reload();}
 function copyRef(){navigator.clipboard.writeText(document.getElementById("refcode").textContent);const m=document.getElementById("ref-msg");m.textContent="✅ Code copied";m.classList.remove("hidden");}
 function copyLink(){navigator.clipboard.writeText(document.getElementById("reflink").value);const m=document.getElementById("ref-msg");m.textContent="✅ Link copied";m.classList.remove("hidden");}
@@ -213,6 +214,7 @@ function copyWallet(){navigator.clipboard.writeText(WALLET);alert("Wallet copied
   const ref=q.get("ref")||q.get("referral")||localStorage.getItem("wp_pending_ref");
   if(ref){localStorage.setItem("wp_pending_ref",ref);const el=document.getElementById("rref");if(el)el.value=ref;}
   const em=localStorage.getItem("wp_email");if(em)document.getElementById("le").value=em;
+  wakeServer();
 })();
 async function login(){
   const err=document.getElementById("lerr");err.classList.add("hidden");
@@ -253,51 +255,27 @@ async function load(){
     const code=(w.user&&w.user.referral_code)||"--------";
     document.getElementById("refcode").textContent=code;
     document.getElementById("reflink").value=location.origin+"/dashboard?ref="+encodeURIComponent(code);
-  }catch(e){if(String(e.message).includes("401"))logout();}
-  try{
-    const d=await api("/api/dashboard");
-    if(d.user&&d.user.referral_code){
-      document.getElementById("refcode").textContent=d.user.referral_code;
-      document.getElementById("reflink").value=location.origin+"/dashboard?ref="+encodeURIComponent(d.user.referral_code);
-      if(d.user.referral_earnings!=null)document.getElementById("refearn").textContent="$"+Number(d.user.referral_earnings).toFixed(2);
-    }
-  }catch(e){}
+  }catch(e){if(String(e.message).includes("401")||String(e.message).toLowerCase().includes("token"))logout();}
   try{
     const p=await api("/api/plans");
     document.getElementById("plans").innerHTML=(p.plans||[]).map(pl=>{
       const g=pl.name==="Gold",el=pl.name==="Elite";
-      return `<div class="border ${g?"border-amber-400/60":el?"border-purple-400/60":"border-slate-700"} rounded-xl p-3 flex justify-between items-center gap-2">
-        <div>
-          <div class="font-semibold">${g?"👑 Gold <span class='bp text-[9px] px-1.5 py-0.5 rounded text-white'>POPULAR</span>":el?"🏆 Elite <span class='bt text-[9px] px-1.5 py-0.5 rounded text-white'>HIGH TIDE</span>":"✨ "+pl.name}</div>
-          <div class="text-xs text-slate-400">Min $${pl.min_amount} · ~$${(pl.min_amount*pl.daily_percent/100/24).toFixed(2)}/hr</div>
-        </div>
-        <button type="button" onclick="invest(${pl.id},${pl.min_amount})" class="${g?"btn-amber":el?"bg-purple-600 text-white font-bold":"btn-teal"} text-xs px-3 py-1.5 rounded-lg">Invest</button>
-      </div>`;
+      return `<div class="border ${g?"border-amber-400/60":el?"border-purple-400/60":"border-slate-700"} rounded-xl p-3 flex justify-between items-center gap-2"><div><div class="font-semibold">${g?"👑 Gold <span class='bp text-[9px] px-1.5 py-0.5 rounded text-white'>POPULAR</span>":el?"🏆 Elite <span class='bt text-[9px] px-1.5 py-0.5 rounded text-white'>HIGH TIDE</span>":"✨ "+pl.name}</div><div class="text-xs text-slate-400">Min $${pl.min_amount} · ~$${(pl.min_amount*pl.daily_percent/100/24).toFixed(2)}/hr</div></div><button type="button" onclick="invest(${pl.id},${pl.min_amount})" class="${g?"btn-amber":el?"bg-purple-600 text-white font-bold":"btn-teal"} text-xs px-3 py-1.5 rounded-lg">Invest</button></div>`;
     }).join("");
-  }catch(e){
-    const fallback=[{id:1,name:"Starter",min_amount:50,daily_percent:350},{id:2,name:"Bronze",min_amount:100,daily_percent:350},{id:3,name:"Silver",min_amount:200,daily_percent:350},{id:4,name:"Gold",min_amount:500,daily_percent:350},{id:5,name:"Platinum",min_amount:1000,daily_percent:350},{id:6,name:"Elite",min_amount:10000,daily_percent:350}];
-    document.getElementById("plans").innerHTML=fallback.map(pl=>{
-      const g=pl.name==="Gold",el=pl.name==="Elite";
-      return `<div class="border ${g?"border-amber-400/60":el?"border-purple-400/60":"border-slate-700"} rounded-xl p-3 flex justify-between items-center gap-2">
-        <div><div class="font-semibold">${g?"👑 Gold <span class='bp text-[9px] px-1.5 py-0.5 rounded text-white'>POPULAR</span>":el?"🏆 Elite <span class='bt text-[9px] px-1.5 py-0.5 rounded text-white'>HIGH TIDE</span>":"✨ "+pl.name}</div>
-        <div class="text-xs text-slate-400">Min $${pl.min_amount} · hourly growth</div></div>
-        <button type="button" onclick="invest(${pl.id},${pl.min_amount})" class="${g?"btn-amber":el?"bg-purple-600 text-white font-bold":"btn-teal"} text-xs px-3 py-1.5 rounded-lg">Invest</button></div>`;
-    }).join("");
-  }
+  }catch(e){}
 }
-async function invest(id,min){
-  const amt=prompt("Amount to invest (min $"+min+")",min);
+async function invest(id,minAmt){
+  const amt=prompt("Amount to invest (min $"+minAmt+")",String(minAmt));
   if(!amt)return;
   try{
     const d=await api("/api/invest",{method:"POST",body:JSON.stringify({plan_id:id,amount:parseFloat(amt)})});
-    alert(d.message||"Invested!");
-    load();
+    alert(d.message||"Invested");load();
   }catch(e){alert(e.message);}
 }
 async function transfer(){
   const msg=document.getElementById("tf-msg");
   try{
-    const d=await api("/api/transfer",{method:"POST",body:JSON.stringify({from:document.getElementById("tf-from").value,amount:parseFloat(document.getElementById("tf-amt").value)}));
+    const d=await api("/api/wallets/transfer",{method:"POST",body:JSON.stringify({from:document.getElementById("tf-from").value,amount:parseFloat(document.getElementById("tf-amt").value)})});
     msg.className="text-sm mt-2 text-center text-emerald-400";msg.textContent=d.message;msg.classList.remove("hidden");
     load();
   }catch(e){msg.className="text-sm mt-2 text-center text-red-400";msg.textContent=e.message;msg.classList.remove("hidden");}
@@ -309,9 +287,7 @@ async function doMpesa(){
   if(!phone||!amount||amount<50){box.className="text-sm p-3 rounded-xl bg-red-950 text-red-300";box.textContent="Phone + min $50";box.classList.remove("hidden");return;}
   try{
     const d=await api("/api/deposit",{method:"POST",body:JSON.stringify({amount,method:"mpesa",phone,country:"KE"})});
-    box.className="text-sm p-3 rounded-xl bg-amber-950 text-amber-200";
-    box.innerHTML=`Pending ${d.reference||""} · now upload screenshot below`;
-    box.classList.remove("hidden");
+    box.className="text-sm p-3 rounded-xl bg-emerald-950 text-emerald-300";box.innerHTML=`Pending ${d.reference||""} · upload screenshot below`;box.classList.remove("hidden");
     document.getElementById("receipt-amount").value=amount;
   }catch(e){box.className="text-sm p-3 rounded-xl bg-red-950 text-red-300";box.textContent=e.message;box.classList.remove("hidden");}
 }
@@ -321,16 +297,14 @@ async function doCrypto(){
   if(!amount||amount<50){box.className="text-sm p-3 rounded-xl bg-red-950 text-red-300";box.textContent="Min $50";box.classList.remove("hidden");return;}
   try{
     const d=await api("/api/deposit",{method:"POST",body:JSON.stringify({amount,method:"crypto",provider_name:"USDT",phone:WALLET,country:"CRYPTO"})});
-    box.className="text-sm p-3 rounded-xl bg-amber-950 text-amber-200";
-    box.innerHTML=`Pending ${d.reference||""} · upload screenshot below`;
-    box.classList.remove("hidden");
+    box.className="text-sm p-3 rounded-xl bg-amber-950 text-amber-200";box.innerHTML=`Pending ${d.reference||""} · upload screenshot`;box.classList.remove("hidden");
     document.getElementById("receipt-amount").value=amount;
   }catch(e){box.className="text-sm p-3 rounded-xl bg-red-950 text-red-300";box.textContent=e.message;box.classList.remove("hidden");}
 }
 function contactAgent(){
   const c=document.getElementById("agent-country").value;
-  const a=document.getElementById("agent-amount").value||"";
-  window.open("https://wa.me/"+WA+"?text="+encodeURIComponent("Hi, I want to deposit via agent. Country: "+c+" Amount: $"+a),"_blank");
+  const a=document.getElementById("agent-amount").value||"50";
+  window.open("https://wa.me/"+WA+"?text="+encodeURIComponent("Hi, I want to deposit $"+a+" via agent ("+c+")"),"_blank");
 }
 async function doReceipt(){
   const btn=document.getElementById("receipt-btn"),box=document.getElementById("receipt-status");
@@ -342,17 +316,13 @@ async function doReceipt(){
   try{
     const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});
     const d=await api("/api/receipt/upload",{method:"POST",body:JSON.stringify({amount,image:b64,filename:file.name,plan_type:"investment"})});
-    box.className="mt-3 p-3 rounded-xl text-sm bg-emerald-950 text-emerald-300";
+    box.className="mt-3 p-3 rounded-xl bg-emerald-950 text-emerald-300 text-sm";
     box.innerHTML=`✅ Submitted for verification · Ref: <b>${d.reference||"—"}</b><br><span class="text-xs opacity-80">We will review and credit your wallet shortly</span>`;
     box.classList.remove("hidden");
-  }catch(e){
-    box.className="mt-3 p-3 rounded-xl bg-red-950 text-red-300 text-sm";
-    box.textContent=e.message;
-    box.classList.remove("hidden");
-  }
+  }catch(e){box.className="mt-3 p-3 rounded-xl bg-red-950 text-red-300 text-sm";box.textContent=e.message;box.classList.remove("hidden");}
   btn.disabled=false;btn.innerHTML="📤 Submit for verification";
 }
-const ticks=["✅ Tendai has just withdrawn $1,250","✅ Chipo has just withdrawn $5,100","🎁 Referral $20 paid","⚡ Automation $100→$500","✅ Grace has just withdrawn $12,500","✅ Farai has just withdrawn $48,000"];
+const ticks=["✅ Tendai has just withdrawn $1,250","✅ Chipo has just withdrawn $5,100","🎁 Referral $20 paid","⚡ Automation $100→$500"];
 document.getElementById("ticker").innerHTML=ticks.concat(ticks).map(t=>`<span class="px-6 text-sm whitespace-nowrap">${t}</span>`).join("");
 if(!token)token=sessionStorage.getItem("wp_token");
 if(token)show();
