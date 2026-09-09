@@ -190,7 +190,7 @@ async function refresh(){
 }
 async function startAuto(plan_id){
   try{
-    const d=await api("/api/automation/start",{method:"POST",body:JSON.stringify({plan_id}));
+    const d=await api("/api/automation/start",{method:"POST",body:JSON.stringify({plan_id:plan_id})});
     alert(d.message);refresh();
   }catch(e){alert(e.message);}
 }
@@ -203,7 +203,7 @@ async function doAutoReceipt(){
   btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner spin"></i> Submitting…';
   try{
     const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});
-    const d=await api("/api/receipt/upload",{method:"POST",body:JSON.stringify({amount,image:b64,filename:file.name,plan_type:"automation"})});
+    const d=await api("/api/receipt/upload",{method:"POST",body:JSON.stringify({amount:amount,image:b64,filename:file.name,plan_type:"automation"})});
     box.className="mt-3 p-3 rounded-xl bg-emerald-950 text-emerald-300 text-sm";
     box.innerHTML=`✅ Submitted for verification · Ref: <b>${d.reference||"—"}</b>`;
     box.classList.remove("hidden");
