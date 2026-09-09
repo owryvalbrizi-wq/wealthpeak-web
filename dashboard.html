@@ -251,45 +251,56 @@ async function load(){
     document.getElementById("main").textContent="$"+(w.main_wallet||0).toFixed(2);
     document.getElementById("inv").textContent="$"+(w.investment_balance||0).toFixed(2);
     document.getElementById("auto").textContent="$"+(w.automation_balance||0).toFixed(2);
-    document.getElementById("refearn").textContent="$"+((w.user&&w.user.referral_earnings)||0).toFixed(2);
-    const code=(w.user&&w.user.referral_code)||"--------";
-    document.getElementById("refcode").textContent=code;
-    document.getElementById("reflink").value=location.origin+"/dashboard?ref="+encodeURIComponent(code);
-  }catch(e){if(String(e.message).includes("401")||String(e.message).toLowerCase().includes("token"))logout();}
-  try{
+    document.getElementById("refearn").textContent="$"+(w.user&&w.user.referral_earnings||0).toFixed(2);
+    if(w.user){document.getElementById("refcode").textContent=w.user.referral_code||"--------";document.getElementById("reflink").value=location.origin+"/?ref="+(w.user.referral_code||"");}
     const p=await api("/api/plans");
-    document.getElementById("plans").innerHTML=(p.plans||[]).map(pl=>{
-      const g=pl.name==="Gold",el=pl.name==="Elite";
-      return `<div class="border ${g?"border-amber-400/60":el?"border-purple-400/60":"border-slate-700"} rounded-xl p-3 flex justify-between items-center gap-2"><div><div class="font-semibold">${g?"👑 Gold <span class='bp text-[9px] px-1.5 py-0.5 rounded text-white'>POPULAR</span>":el?"🏆 Elite <span class='bt text-[9px] px-1.5 py-0.5 rounded text-white'>HIGH TIDE</span>":"✨ "+pl.name}</div><div class="text-xs text-slate-400">Min $${pl.min_amount} · ~$${(pl.min_amount*pl.daily_percent/100/24).toFixed(2)}/hr</div></div><button type="button" onclick="invest(${pl.id},${pl.min_amount})" class="${g?"btn-amber":el?"bg-purple-600 text-white font-bold":"btn-teal"} text-xs px-3 py-1.5 rounded-lg">Invest</button></div>`;
-    }).join("");
-  }catch(e){}
-}
-async function invest(id,minAmt){
-  const amt=prompt("Amount to invest (min $"+minAmt+")",String(minAmt));
-  if(!amt)return;
-  try{
-    const d=await api("/api/invest",{method:"POST",body:JSON.stringify({plan_id:id,amount:parseFloat(amt)})});
-    alert(d.message||"Invested");load();
-  }catch(e){alert(e.message);}
+    const plans=p.plans||p||[];
+    document.getElementById("plans").innerHTML=plans.map(x=>`<div class="card p-3 border border-slate-700"><div class="font-bold">${x.name}</div><div class="text-teal-400">$${x.min_amount} · ${x.daily_percent}%/day</div><div class="text-xs text-slate-400">${x.duration_days} days</div></div>`).join("")||"No plans";
+  }catch(e){console.error(e);}
 }
 async function transfer(){
-  const msg=document.getElementById("tf-msg");
+  const box=document.getElementById("tf-msg");
   try{
-    const d=await api("/api/wallets/transfer",{method:"POST",body:JSON.stringify({from:document.getElementById("tf-from").value,amount:parseFloat(document.getElementById("tf-amt").value)})});
-    msg.className="text-sm mt-2 text-center text-emerald-400";msg.textContent=d.message;msg.classList.remove("hidden");
-    load();
-  }catch(e){msg.className="text-sm mt-2 text-center text-red-400";msg.textContent=e.message;msg.classList.remove("hidden");}
+    const d=await api("/api/transfer",{method:"POST",body:JSON.stringify({from:document.getElementById("tf-from").value,amount:parseFloat(document.getElementById("tf-amt").value)})});
+    box.className="text-sm mt-2 text-center text-emerald-400";box.textContent=d.message||"Transferred";box.classList.remove("hidden");load();
+  }catch(e){box.className="text-sm mt-2 text-center text-red-400";box.textContent=e.message;box.classList.remove("hidden");}
 }
 async function doMpesa(){
   const box=document.getElementById("mpesa-status");
+  const btn=document.getElementById("mpesa-btn");
   const phone=document.getElementById("mpesa-phone").value.trim();
   const amount=parseFloat(document.getElementById("mpesa-amount").value);
   if(!phone||!amount||amount<50){box.className="text-sm p-3 rounded-xl bg-red-950 text-red-300";box.textContent="Phone + min $50";box.classList.remove("hidden");return;}
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner spin"></i> Sending STK…';
   try{
-    const d=await api("/api/deposit",{method:"POST",body:JSON.stringify({amount,method:"mpesa",phone,country:"KE"})});
-    box.className="text-sm p-3 rounded-xl bg-emerald-950 text-emerald-300";box.innerHTML=`Pending ${d.reference||""} · upload screenshot below`;box.classList.remove("hidden");
+    const d=await api("/api/zetupay/initiate",{method:"POST",body:JSON.stringify({amount,phone})});
+    box.className="text-sm p-3 rounded-xl bg-emerald-950 text-emerald-300";
+    let html=`✅ STK sent · Ref <b>${d.reference||""}</b>`;
+    if(d.amount_kes)html+=`<br>Amount: ~KES ${d.amount_kes} ($${amount})`;
+    html+=`<br><span class="text-xs opacity-90">Enter M-Pesa PIN on your phone</span>`;
+    if(d.checkoutUrl)html+=`<br><a href="${d.checkoutUrl}" target="_blank" class="underline text-teal-300">Open checkout link</a>`;
+    html+=`<br><span class="text-xs opacity-70">If no prompt, upload screenshot below</span>`;
+    box.innerHTML=html;box.classList.remove("hidden");
     document.getElementById("receipt-amount").value=amount;
-  }catch(e){box.className="text-sm p-3 rounded-xl bg-red-950 text-red-300";box.textContent=e.message;box.classList.remove("hidden");}
+    if(d.paymentKey){
+      let n=0;const t=setInterval(async()=>{
+        n++;if(n>20){clearInterval(t);return;}
+        try{
+          const s=await api("/api/zetupay/check/"+d.paymentKey);
+          if((s.status||"").toLowerCase()==="success"){
+            clearInterval(t);
+            box.innerHTML=`✅ Paid · ${d.reference} · wallet will update shortly`;
+            if(typeof load==="function")load();
+          }
+        }catch(e){}
+      },4000);
+    }
+  }catch(e){
+    box.className="text-sm p-3 rounded-xl bg-red-950 text-red-300";
+    box.textContent=e.message||"Payment failed";
+    box.classList.remove("hidden");
+  }
+  btn.disabled=false;btn.innerHTML="📲 Pay with M-Pesa / Zetupay";
 }
 async function doCrypto(){
   const box=document.getElementById("crypto-status");
@@ -323,9 +334,8 @@ async function doReceipt(){
   btn.disabled=false;btn.innerHTML="📤 Submit for verification";
 }
 const ticks=["✅ Tendai has just withdrawn $1,250","✅ Chipo has just withdrawn $5,100","🎁 Referral $20 paid","⚡ Automation $100→$500"];
-document.getElementById("ticker").innerHTML=ticks.concat(ticks).map(t=>`<span class="px-6 text-sm whitespace-nowrap">${t}</span>`).join("");
-if(!token)token=sessionStorage.getItem("wp_token");
-if(token)show();
+(function(){const t=document.getElementById("ticker");const s=ticks.concat(ticks).map(x=>`<span class="mx-6 text-sm text-teal-300/90">${x}</span>`).join("");t.innerHTML=`<div class="t2">${s}</div>`;})();
+if(token||sessionStorage.getItem("wp_token")){token=token||sessionStorage.getItem("wp_token");show();}
 </script>
 </body>
 </html>
